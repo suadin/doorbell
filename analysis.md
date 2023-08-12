@@ -17,7 +17,7 @@ At start working lot with search functionality. For example searched `bell`, fou
 public static final int key_door_bell = 2131820944;
 ```
 
-If search `key_door_bell` than find lot of matches, as well whehere that key is used:
+If search `key_door_bell` than find lot of matches, as well where that key is used:
 ```
 public String getAlarmEventName(Context context, int i, int i2, String str, String str2) {
   switch (i) {
@@ -26,5 +26,25 @@ public String getAlarmEventName(Context context, int i, int i2, String str, Stri
       return context.getString(R.string.key_door_bell);
 ```
 
-Id search for the method `getAlarmEventName`, found interesting classes like `PushHelper`, `AlarmHelper`, `AlarmMessage`. Btw. please avoid using `Helper` as suffix for your classes, thats meaningless.
+Search for the method `getAlarmEventName`, found classes like `PushHelper`. Btw. please avoid using `Helper` as suffix for your classes.
 
+We are interested into parameter `i==7`, therefore we focus on input of second parameter:
+* `PushHelper`: `alarmMessageInfo.getAlarmEvent()`
+* `DeviceAlarmDetailActivity`: `intExtra` -> `= getIntent().getIntExtra(TYPE, 2);` -> `TYPE = "intent_type"`
+* `AlarmInfoAdapter`: `qvAlarmMsgItem.getEvent()`
+
+An adapter usually translates message between two systems, therefore the third usage gets my interest:
+* `class QvAlarmMsgItem` contains properties like `alarmId`, `alarmState`, `sensorChannel`, ...
+* `new QvAlarmMsgItem` has two matches: `LtAlarmManager`, `QvAlarmCore` (another bad suffix `...Manager`)
+
+Both are doing similar things, they iterate over a list. One over `QvLtPushBean` elements, the other over `AlarmListQueryResp.AlarmItem` elements.
+
+In that way the code understanding will continue.
+
+## Features
+
+After code understanding we are aware about which features are supported by that android app and which features we could integrate into home assist.
+
+Currently a possible & useful feature could be:
+* recognition of door bell activation
+* ...
